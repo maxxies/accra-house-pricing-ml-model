@@ -1,13 +1,12 @@
 from bs4 import BeautifulSoup
 import requests
 
-source = requests.get("https://meqasa.com/houses-for-sale-in-Accra.html?w=1").text
+source = requests.get("https://meqasa.com/houses-for-sale-in-Accra.html?w=4").text
 soup = BeautifulSoup(source, 'lxml')
-
 count = 1
 # Scraping all html tags with data needed
 for data in soup.find_all('div', class_='mqs-prop-dt-wrapper'):
-    inner_li_shower = data.find('li',class_='shower')             # bathrooms tag data
+    inner_li_shower = data.find('li',class_='shower')             # bathroom tag data
     inner_li_bed = data.find('li', class_='bed')                  # bed tag data
     inner_li_garage = data.find('li',class_='garage')             # garage tag data
     price_data = data.find('p',class_='h3')                       # price data tag
@@ -32,7 +31,12 @@ for data in soup.find_all('div', class_='mqs-prop-dt-wrapper'):
 
     # slicing actual price from scraped price data
     if price_data is not None:
-        price = price_data.text
+        main_price = "".join(price_data.text[9:].split(',')).strip()         # Splitting price from string
+        # checks if splitted price is a number or string
+        if main_price.isdigit():
+            price = int(main_price)
+        else:
+            price = None
     else:
         price = None
 
