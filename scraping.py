@@ -16,33 +16,34 @@ driver.get("https://meqasa.com/houses-for-sale-in-Accra.html?w=1")
 count = 1
 
 try:
-    datacontainer = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.ID,"listview")))
-    databox = datacontainer.find_element(By.CLASS_NAME("row.mqs-featured-prop-inner-wrap.clickable"))
-
+    datacontainer = WebDriverWait(driver, 20).until(EC.visibility_of_all_elements_located((By.ID, "listview")))
+    databox = datacontainer.find_elements(By.CLASS_NAME, "row mqs-featured-prop-inner-wrap clickable")
+    print(datacontainer)
+    print(datacontainer[1])
 # source = requests.get("https://meqasa.com/houses-for-sale-in-Accra.html?w=4").text
 # soup = BeautifulSoup(source, 'lxml')
 # # Scraping all html tags with data needed
     for data in databox:
-        inner_li_shower = data.find_element(By.CLASS_NAME('shower'))       # bathroom tag data
-        inner_li_bed = data.find_element(By.CLASS_NAME('bed'))                # bed tag data
-        inner_li_garage = data.find_element(By.CLASS_NAME('garage'))            # garage tag data
-        price_data = data.find_element(By.CLASS_NAME('h3')).text                 # price data tag
-        loc_data = data.find_element(By.CLASS_NAME('h2')).text
+        inner_li_shower = data.find_element(By.CLASS_NAME,'shower')       # bathroom tag data
+        inner_li_bed = data.find_element(By.CLASS_NAME,'bed')                # bed tag data
+        inner_li_garage = data.find_element(By.CLASS_NAME,'garage')            # garage tag data
+        price_data = data.find_element(By.CLASS_NAME,'h3').text                 # price data tag
+        loc_data = data.find_element(By.CLASS_NAME,'h2').text
         # checking if bathroom data is available before scraping number
         if inner_li_shower is not None:
-            bathrooms = inner_li_shower.find_element(By.TAG_NAME("span")).text
+            bathrooms = inner_li_shower.find_element(By.TAG_NAME,"span").text
         else:
             bathrooms = None
 
         # checking if bed data is available before scraping number
         if inner_li_bed is not None:
-            bedrooms = inner_li_bed.find_element(By.TAG_NAME("span")).text
+            bedrooms = inner_li_bed.find_element(By.TAG_NAME,"span").text
         else:
             bedrooms = None
 
          # checking if garage data is available before scraping number
         if inner_li_garage is not None:
-            garage = inner_li_garage.find_element(By.TAG_NAME("span")).getText()
+            garage = inner_li_garage.find_element(By.TAG_NAME,"span").text
         else:
             garage = None
 
@@ -59,7 +60,7 @@ try:
 
         # slicing actual location from scraped location data
         if loc_data is not None:
-            loc = loc_data.findElement(By.TAG_NAME("a")).text                      # converts location data to list of items
+            loc = loc_data.findElement(By.TAG_NAME,"a").text                      # converts location data to list of items
             location = " ".join(loc[loc.index('at') + 1:None])    # takes name from list by slicing list
         else:
             location = None
