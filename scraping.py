@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoSuchElementException
-import time
+from geopy.geocoders import Nominatim
 
 # Driver settings
 PATH = "C:\programs\chromedriver.exe"
@@ -20,12 +20,12 @@ count = 1
 
 # Scraping data
 try:
-    page_count = 0
-    while page_count < 3:
+    page_count = 1
+    while page_count < 2:
         # Scrapes container from which data is found.(container--> HTML element data is in)
-        datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "listview")))
+        datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'pg'+str(page_count))))
         # Gets all the data from the container
-        databox = datacontainer.find_elements(By.CLASS_NAME, "row.mqs-featured-prop-inner-wrap.clickable")
+        databox = datacontainer.find_elements(By.CLASS_NAME, 'row.mqs-featured-prop-inner-wrap.clickable')
 
         #   Loops through list of data to scrap specific data-information from a data taken at a time
         for data in databox:
@@ -54,27 +54,56 @@ try:
                 inner_li_garage = None
 
             # Scraping price
-            price_data = data.find_element(By.XPATH,"//p[@class='h3']").get_attribute("innerText")
+            try:
+                price_data = data.find_element(By.CLASS_NAME, 'h3').get_attribute("innerText")
+                # Splitting price from string
+                price_data = str(price_data)
+                main_price = "".join(price_data[3:].split(',')).strip()
+                # checks if splitted price is a number or string
+                if main_price.isdigit():
+                    price = int(main_price)
+                else:
+                    price = None
+            except :
+                price = None
+
+            # Breaks out out scraping particular data when no price is given
+            if price == None:
+                break
 
             # Scraping location
             loc_box = data.find_element(By.TAG_NAME,'h2')
             loc_data = loc_box.find_element(By.TAG_NAME,'a').get_attribute("innerHTML")
 
-            # Splitting price from string
-
-            price_data = str(price_data)
-            main_price = "".join(price_data[3:].split(',')).strip()
-                # checks if splitted price is a number or string
-            if main_price.isdigit():
-                price = int(main_price)
-            else:
-                price = None
-
             # slicing actual location from scraped location data
-            location = "".join(loc_data[loc_data.index('at') + 2:None])    # takes name from list by slicing list
+            """
+                Most locations have Hills attached to them which gives the wrong coordinates thus, the need to remove them.
+            """
+            if 'hills' in loc_data and ',' in loc_data:
+                hills_loc = loc_data.index('hills')
+                comma_loc = loc_data.index(',')
+                end = min(hills_loc, comma_loc)
+            elif ',' in loc_data and 'hills' not in loc_data:
+                end = loc_data.index(',')
+            elif 'hills' in loc_data and ',' not in loc_data:
+                end = loc_data.index('hills')
+            else:
+                end = None
+            location = "".join(loc_data[loc_data.index('at') + 3: end])  # takes name from list by slicing
 
+            # Getting latitudes and longitudes of location
+            try:
+                geolocator = Nominatim(user_agent="https")
+                location_coordinates = geolocator.geocode(location)
+                latitude = location_coordinates.latitude
+                longitude = location_coordinates.longitude
+            except AttributeError:
+                latitude = None
+                longitude = None
             print("----------------------------------->>>", count)
             print("Location :", location)
+            print("Latitudes :", latitude)
+            print("Longitudes :", longitude)
             print("Shower :",inner_li_shower)
             print("Bed :",inner_li_bed)
             print("Garage :",inner_li_garage)
@@ -85,7 +114,6 @@ try:
         button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "pagenumnext")))
         button.click()
         page_count = page_count + 1
-        time.sleep(10)
 
 except TimeoutException :
     print("TIme out error.")
