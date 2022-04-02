@@ -11,6 +11,7 @@ from geopy.geocoders import Nominatim
 from geopy.extra.rate_limiter import  RateLimiter
 import csv
 import time
+import math
 
 # Driver settings
 PATH = "C:\programs\chromedriver.exe"
@@ -20,15 +21,15 @@ driver = webdriver.Chrome(service=ser, options= op)
 driver.get("https://meqasa.com/houses-for-sale-in-Accra.html?w=1")     # Url of page to be scrapped
 
 count = 1
-
+total_count = 0
 # Scraping data
 try:
     # Setting up csv file to write data into to csv file
-    csv_file = open('data.csv', 'a', newline='')
+    csv_file = open('housing_data.csv', 'a', newline='')
     csv_writer = csv.writer(csv_file, delimiter=',')
     csv_writer.writerow(['Location', 'Latitude', 'Longitude', 'Bedrooms', 'Bathrooms', 'Garage', 'Price'])
     page_count = 1
-    while page_count < 2:
+    while page_count < 716:
         # Scrapes container from which data is found.(container--> HTML element data is in)
         datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'pg'+str(page_count))))
         # Gets all the data from the container
@@ -103,21 +104,17 @@ try:
                 longitude = None
 
 
-            print("----------------------------------->>>", count)
-            print("Location :", location)
-            print("Latitude :", latitude)
-            print("Longitude :", longitude)
-            print("Shower :",inner_li_shower)
-            print("Bed :",inner_li_bed)
-            print("Garage :",inner_li_garage)
-            print('Price :',price)
 
             # Writing processed scraped data to csv file
-            if price is not None and latitude is not None and longitude is not None :
-                csv_writer.writerow([location.capitalize(), latitude, longitude, int(inner_li_bed), int(inner_li_shower), int(inner_li_shower), int(price)])
-                count += 1
+            if price is not None and latitude is not None and longitude is not None :     # Allow only data with price, lonitude and latitude values
+                if math.floor(latitude) == 5:
+                    if location.lower() == "dome,ghana":  # To change name back to Dome
+                        location = 'Dome'
+                    # Checks if town is around accra based on latitude
+                    csv_writer.writerow([location.lower().capitalize(), float(latitude), float(longitude), int(inner_li_bed), int(inner_li_shower), int(inner_li_shower), int(price)])
+                    count += 1
+            total_count += 1
 
-        count = 1
         # Clicks on button to load next page data
         button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "pagenumnext")))
         button.click()
@@ -126,7 +123,10 @@ try:
 except TimeoutException :
     print("TIme out error.")
     driver.close()
-    # csv_file.close()
+    csv_file.close()
 finally:
     driver.quit()
-    # csv_file.close()
+    csv_file.close()
+    print("Total Pages:", page_count)
+    print("Total Data: ", total_count)
+    print("Saved Data: ", count)
