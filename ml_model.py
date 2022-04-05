@@ -1,20 +1,32 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import OrdinalEncoder
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.metrics import mean_absolute_error
-from sklearn.linear_model import LinearRegression
 
-# Load data set and read info about the data set
+
 data_path = 'data.csv'
 housing_data = pd.read_csv(data_path)
-print(housing_data.info())
-print(housing_data.head())
+# print(housing_data.head(10))
+# print(housing_data.info())
 
-# Visualize data
-housing_data.plot(kind="scatter", x="Longitude", y="Latitude",s= (housing_data["Bedrooms"]+housing_data["Bathrooms"])*4, label="Rooms" , c='Price', alpha=0.4, figsize=(10,7),  cmap=plt.get_cmap("jet"), colorbar=True)
-plt.legend()
-plt.show()
+# Filling all missing spaces especially in Garage column
+imputer = SimpleImputer(strategy='median');
+housing_data_rooms = housing_data.drop(["Location", "Longitude", "Latitude", "Price"], axis=1)
+transformed_data = imputer.fit_transform(housing_data_rooms)
+new_rooms_data = pd.DataFrame(transformed_data, columns=housing_data_rooms.columns, index=housing_data_rooms.index)
+# New transformed data set after filling all missing spaces
+new_housing_data = pd.concat([housing_data.drop(["Bathrooms", "Garage", "Bedrooms"], axis=1), new_rooms_data], axis=1)    # Concatenating dataframes of transformed data with part of existing dataframe
+
+
+# # Correlations of features with price feature
+# corr_matrix = housing_data.corr()
+# print(corr_matrix)
+# plt.imshow(corr_matrix, cmap='hot')
+# plt.show()
+# print(corr_matrix["Price"].sort_values(ascending=False))
+
+#
+# # Visualize data
+# new_housing_data.plot(kind="scatter", x="Longitude", y="Latitude", s=(new_housing_data["Bedrooms"] + new_housing_data["Bathrooms"] + new_housing_data["Garage"]/10), label="Avg. House Size" , c='Price', alpha=0.4, figsize=(10,7),  cmap=plt.get_cmap("jet"), colorbar=True)
+# plt.legend()
+# plt.show()

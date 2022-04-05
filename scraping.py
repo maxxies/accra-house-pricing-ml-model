@@ -1,5 +1,3 @@
-from bs4 import BeautifulSoup
-import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -20,16 +18,16 @@ op = webdriver.ChromeOptions()
 driver = webdriver.Chrome(service=ser, options= op)
 driver.get("https://meqasa.com/houses-for-sale-in-Accra.html?w=1")     # Url of page to be scrapped
 
-count = 1
+count = 0
 total_count = 0
 # Scraping data
 try:
     # Setting up csv file to write data into to csv file
     csv_file = open('housing_data.csv', 'a', newline='')
     csv_writer = csv.writer(csv_file, delimiter=',')
-    csv_writer.writerow(['Location', 'Latitude', 'Longitude', 'Bedrooms', 'Bathrooms', 'Garage', 'Price'])
+    csv_writer.writerow(['Location', 'Latitude', 'Longitude', 'Bedrooms','Garage' , 'Bathrooms', 'Price'])
     page_count = 1
-    while page_count < 716:
+    while page_count < 20:
         # Scrapes container from which data is found.(container--> HTML element data is in)
         datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'pg'+str(page_count))))
         # Gets all the data from the container
@@ -39,16 +37,16 @@ try:
         for data in databox:
             # Scraping the number of bathrooms
             try:
-                li_shower = data.find_element(By.CLASS_NAME,'shower')
-                inner_li_shower = li_shower.find_element(By.TAG_NAME,'span').get_attribute("innerHTML")
+                li_shower = data.find_element(By.CLASS_NAME, 'shower')
+                inner_li_shower = int(li_shower.find_element(By.TAG_NAME,'span').get_attribute("innerHTML"))
             except NoSuchElementException:
                 # Sets none when no shower-data is found for a particular data
                 inner_li_shower = None
 
             # Scraping the number of bed spaces
             try:
-                li_bed = data.find_element(By.CLASS_NAME,'bed')
-                inner_li_bed = li_bed.find_element(By.TAG_NAME,'span').get_attribute("innerHTML")
+                li_bed = data.find_element(By.CLASS_NAME, 'bed')
+                inner_li_bed = int(li_bed.find_element(By.TAG_NAME,'span').get_attribute("innerHTML"))
             except NoSuchElementException:
                 # Sets none when no bed-data is found for a particular data
                 inner_li_bed = None
@@ -56,7 +54,7 @@ try:
             # Scraping number of garage spaces
             try:
                 li_garage = data.find_element(By.CLASS_NAME,'garage')
-                inner_li_garage = li_garage.find_element(By.TAG_NAME,'span').get_attribute("innerHTML")
+                inner_li_garage = int(li_garage.find_element(By.TAG_NAME,'span').get_attribute("innerHTML"))
             except NoSuchElementException:
                 # Sets none when no garage-data is found for a particular data
                 inner_li_garage = None
@@ -69,15 +67,11 @@ try:
                 main_price = "".join(price_data[3:].split(',')).strip()
                 # checks if price is a number or string
                 if main_price.isdigit():
-                    price = main_price
+                    price = int(main_price)
                 else:
                     price = None
             except :
                 price = None
-
-            # Breaks out out scraping particular data when no price is given
-            if price == None:
-                break
 
             # Scraping location
             loc_box = data.find_element(By.TAG_NAME,'h2')
@@ -103,30 +97,34 @@ try:
                 latitude = None
                 longitude = None
 
-
-
             # Writing processed scraped data to csv file
             if price is not None and latitude is not None and longitude is not None :     # Allow only data with price, lonitude and latitude values
-                if math.floor(latitude) == 5:
+                if math.floor(latitude) == 5:  # Checks if locations are found in Accra only
                     if location.lower() == "dome,ghana":  # To change name back to Dome
                         location = 'Dome'
-                    # Checks if town is around accra based on latitude
-                    csv_writer.writerow([location.lower().capitalize(), float(latitude), float(longitude), int(inner_li_bed), int(inner_li_shower), int(inner_li_shower), int(price)])
+                    # writes data to file
+                    csv_writer.writerow([location.lower().capitalize(), float(latitude), float(longitude), inner_li_bed, inner_li_garage, inner_li_shower, price])
                     count += 1
             total_count += 1
 
-        # Clicks on button to load next page data
+        print("Page ", page_count, ": ", count)  # Number of saved data after each page
+        # Clicks on button to load next page for data scraping
         button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "pagenumnext")))
         button.click()
         page_count = page_count + 1
+        time.sleep(5)
+
 
 except TimeoutException :
     print("TIme out error.")
     driver.close()
     csv_file.close()
+
+
 finally:
     driver.quit()
     csv_file.close()
     print("Total Pages:", page_count)
     print("Total Data: ", total_count)
     print("Saved Data: ", count)
+    print("Rejected Data: ", total_count - count)
