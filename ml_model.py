@@ -26,7 +26,7 @@ new_housing_data = pd.concat([housing_data.drop(["Bathrooms", "Garage", "Bedroom
 # print(corr_matrix["Price"].sort_values(ascending=False))
 
 #
-# # Visualize data
-# new_housing_data.plot(kind="scatter", x="Longitude", y="Latitude", s=(new_housing_data["Bedrooms"] + new_housing_data["Bathrooms"] + new_housing_data["Garage"]/10), label="Avg. House Size" , c='Price', alpha=0.4, figsize=(10,7),  cmap=plt.get_cmap("jet"), colorbar=True)
-# plt.legend()
-# plt.show()
+# Visualize data
+new_housing_data.plot(kind="scatter", x="Longitude", y="Latitude", s=(new_housing_data["Bedrooms"] + new_housing_data["Bathrooms"] + new_housing_data["Garage"]/10), label="Avg. House Size" , c='Price', alpha=0.4, figsize=(10,7),  cmap=plt.get_cmap("jet"), colorbar=True)
+plt.legend()
+plt.show()

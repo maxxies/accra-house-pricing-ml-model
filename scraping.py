@@ -27,11 +27,14 @@ try:
     csv_writer = csv.writer(csv_file, delimiter=',')
     csv_writer.writerow(['Location', 'Latitude', 'Longitude', 'Bedrooms','Garage' , 'Bathrooms', 'Price'])
     page_count = 1
-    while page_count < 20:
+    while page_count < 733:
         # Scrapes container from which data is found.(container--> HTML element data is in)
         datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'pg'+str(page_count))))
         # Gets all the data from the container
-        databox = datacontainer.find_elements(By.CLASS_NAME, 'row.mqs-featured-prop-inner-wrap.clickable')
+        if datacontainer.find_elements(By.CLASS_NAME, 'row.mqs-prop-inner-wrap.clickable'):
+            databox = datacontainer.find_elements(By.CLASS_NAME, 'row.mqs-prop-inner-wrap.clickable')
+        else:
+            databox = datacontainer.find_elements(By.CLASS_NAME, "row.mqs-featured-prop-inner-wrap.clickable ")
 
         #   Loops through list of data to scrap specific data-information from a data taken at a time
         for data in databox:
@@ -108,12 +111,11 @@ try:
             total_count += 1
 
         print("Page ", page_count, ": ", count)  # Number of saved data after each page
+        time.sleep(2)
         # Clicks on button to load next page for data scraping
-        button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "pagenumnext")))
-        button.click()
+        button = driver.find_element(By.ID, "pagenumnext")
+        driver.execute_script("arguments[0].click();", button)
         page_count = page_count + 1
-        time.sleep(5)
-
 
 except TimeoutException :
     print("TIme out error.")
