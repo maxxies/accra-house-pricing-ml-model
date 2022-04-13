@@ -27,7 +27,7 @@ try:
     csv_writer = csv.writer(csv_file, delimiter=',')
     csv_writer.writerow(['Location', 'Latitude', 'Longitude', 'Bedrooms','Garage' , 'Bathrooms', 'Price'])
     page_count = 1
-    while page_count < 733:
+    while page_count < 743:
         # Scrapes container from which data is found.(container--> HTML element data is in)
         datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'pg'+str(page_count))))
         # Gets all the data from the container
@@ -41,7 +41,11 @@ try:
             # Scraping the number of bathrooms
             try:
                 li_shower = data.find_element(By.CLASS_NAME, 'shower')
-                inner_li_shower = int(li_shower.find_element(By.TAG_NAME,'span').get_attribute("innerHTML"))
+                inner_li_shower = li_shower.find_element(By.TAG_NAME,'span').get_attribute("innerHTML")
+                if inner_li_shower.isdigit():
+                    inner_li_shower = int(inner_li_shower)
+                else:
+                    inner_li_shower = None
             except NoSuchElementException:
                 # Sets none when no shower-data is found for a particular data
                 inner_li_shower = None
@@ -49,7 +53,11 @@ try:
             # Scraping the number of bed spaces
             try:
                 li_bed = data.find_element(By.CLASS_NAME, 'bed')
-                inner_li_bed = int(li_bed.find_element(By.TAG_NAME,'span').get_attribute("innerHTML"))
+                inner_li_bed = li_bed.find_element(By.TAG_NAME,'span').get_attribute("innerHTML")
+                if inner_li_bed.isdigit():
+                    inner_li_bed = int(inner_li_bed)
+                else:
+                    inner_li_bed = None
             except NoSuchElementException:
                 # Sets none when no bed-data is found for a particular data
                 inner_li_bed = None
@@ -57,7 +65,11 @@ try:
             # Scraping number of garage spaces
             try:
                 li_garage = data.find_element(By.CLASS_NAME,'garage')
-                inner_li_garage = int(li_garage.find_element(By.TAG_NAME,'span').get_attribute("innerHTML"))
+                inner_li_garage = li_garage.find_element(By.TAG_NAME,'span').get_attribute("innerHTML")
+                if inner_li_garage.isdigit():
+                    inner_li_garage = int(inner_li_garage)
+                else:
+                    inner_li_garage = None
             except NoSuchElementException:
                 # Sets none when no garage-data is found for a particular data
                 inner_li_garage = None
@@ -77,16 +89,19 @@ try:
                 price = None
 
             # Scraping location
-            loc_box = data.find_element(By.TAG_NAME,'h2')
-            loc_data = loc_box.find_element(By.TAG_NAME,'a').get_attribute("innerHTML")
-            # slicing actual location from scraped location data
-            if ',' in loc_data:
-                end = loc_data.index(',')
-            else:
-                end = None
-            location = "".join(loc_data[loc_data.index('at') + 3: end])  # takes name from list by slicing
-            if location.lower() == "dome":   # To distinguish among Benin's and Ghana's
-                location = location + ',Ghana'
+            try:
+                loc_box = data.find_element(By.TAG_NAME,'h2')
+                loc_data = loc_box.find_element(By.TAG_NAME,'a').get_attribute("innerHTML")
+                # slicing actual location from scraped location data
+                if ',' in loc_data:
+                    end = loc_data.index(',')
+                else:
+                    end = None
+                location = "".join(loc_data[loc_data.index('at') + 3: end])  # takes name from list by slicing
+                if location.lower() == "dome":   # To distinguish among Benin's and Ghana's
+                    location = location + ',Ghana'
+            except:
+                location = None
 
             # Getting latitudes and longitudes of location
             time.sleep(2)
