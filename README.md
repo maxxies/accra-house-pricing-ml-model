@@ -5,11 +5,15 @@ A machine learning model to predict the price of a house in Accra, Ghana when gi
 * [Overview](#overview)
 * [Sections](#sections)
     * [Overview](#overview)
-    * [Scraping Data](#scrapingdata)
+    * [Data](#data)
     * [Model](#model)    
     * [Deployment](#deployment)
     
-#overview
-#scrapingdata
-#model
-#deployment
+## Overview
+
+## Sections
+
+### Overview
+### Data
+### Model
+### Deployment
