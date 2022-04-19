@@ -12,71 +12,80 @@
             <div class="title-box">
                 <h1>Accra House Pricing Predictor</h1>
             </div>
-
-            <h1>{{location}}</h1>
+            <h2>{{send}}</h2>
+            <h1>{{data}}</h1>
             <p>{{one}}</p>
             <p>{{two}}</p>
             <p>{{three}}</p>
+            <p>{{latitude}}</p>
+            <p>{{longitude}}</p>
             <div class="form-input-box">
                 <form action="/" method="POST">
                     <div>
-                        <label for="location">Location:</label>
+                        <label htmlfor="location">Location:</label>
                         <input
+                                form="form-input"
                             type="text"
                             name="location"
-                            id="location"
-
                             required
-                        />
+                        >
                     </div>
                     <div>
-                        <label for="bedrooms">Bedroom:</label>
+                        <label htmlfor="bedrooms">Bedroom:</label>
                         <input
+                                form="form-input"
                             type="text"
                             name="bedrooms"
-                            id="bedrooms"
-
-                            placeholder="Enter number"
+                            placeholder="Enter a number"
                             onkeypress="onKeyPress(event)"
-                        />
+                                required
+                        >
                     </div>
                     <div>
-                        <label for="bathrooms">Bathroom:</label>
+                        <label htmlfor="bathrooms">Bathroom:</label>
                         <input
                             type="text"
                             name="bathrooms"
-                            id="bathrooms"
+                            form="form-input"
 
-                            placeholder="Enter number"
+                            placeholder="Enter a number"
                             onkeypress="onKeyPress(event)"
-                        />
+                            required
+                        >
                     </div>
                     <div>
-                        <label for="garages">Garage:</label>
+                        <label htmlfor="garages">Garage:</label>
                         <input
                             type="text"
                             name="garages"
-                            id="garages"
-                            placeholder="Enter number"
+                            form="form-input"
+
+                            placeholder="Enter a number"
                             onkeypress="onKeyPress(event)"
                         />
                     </div>
                 </form>
             </div>
             <div class="form-submit-box">
-                <form action="/" method='POST'>
+                <form action="/" method='POST' id="form-input">
                     <input type="submit" value="Predict" />
                 </form>
             </div>
-
+            {%if prediction %}
             <div class="prediction-box">
-                <p>The price is GHS <span>25,361.00</span> </p>
+                <p>The price is GHS <span>{{prediction}}</span> </p>
             </div>
+            {%endif%}
+            {%if error %}
+            <div class="prediction-box">
+                <p>{{error}} </p>
+            </div>
+            {%endif%}
         </section>
     </body>
     <script>
         function onKeyPress(event) {
-            if (!/^\d*\.?\d*$/.test(event.key)) {
+            if (!/[0-9]/.test(event.key)) {
                 event.preventDefault();
             }
         }
