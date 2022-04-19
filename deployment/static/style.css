@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Akshar&family=Barlow+Condensed:wght@200&family=Prata&family=Questrial&family=Work+Sans:wght@300&display=swap");
+
+body {
+    background-color: #fffcf7;
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    width: 70%;
+    padding: 1%;
+    margin: 0 auto;
+}
+
+.title-box {
+    width: 90%;
+    margin: 0 auto;
+    padding: 0.5%;
+    text-align: center;
+}
+
+.title-box h1 {
+    width: 95%;
+    font-size: 250%;
+    font-family: "Akshar", sans-serif;
+
+    font-weight: 700;
+    color: #1d0229;
+}
+
+.form-input-box {
+    padding: 1.5%;
+    width: 70%;
+    margin: 1% auto;
+    box-sizing: border-box;
+    background-color: #feffff;
+    box-shadow: 0 5px 10px #e1e5ee;
+    align-items: flex-start;
+    border-radius: 10px;
+}
+
+.form-input-box div {
+    width: 100%;
+    min-height: 8vh;
+    margin-bottom: 1.3rem;
+}
+.form-input-box label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 1%;
+    font-family: "Barlow Condensed", sans-serif;
+    color: #db1d4b;
+    font-size: 110%;
+}
+
+.form-input-box input {
+    display: block;
+    font: inherit;
+    border-radius: 25px;
+    border: 1px solid #0e3854;
+    padding: 1.2%;
+    padding-left: 3%;
+    width: 60%;
+    outline: none;
+    color: black;
+    background-color: white;
+    font-family: "Work Sans", sans-serif;
+}
+
+.form-submit-box {
+    width: 70%;
+    margin: 2px auto;
+    box-sizing: border-box;
+    align-items: center;
+}
+.form-submit-box input {
+    font: inherit;
+    cursor: pointer;
+    background-color: #ff6187;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #ff6187;
+    border-radius: 30px;
+    font-weight: 400;
+    align-items: center;
+    font-family: "Questrial", sans-serif;
+}
+
+.prediction-box {
+    width: 70%;
+    margin: 0 auto;
+    padding: 0.1%;
+    font-size: 150%;
+    color: #c25303;
+    text-align: center;
+    font-weight: 300;
+    font-family: "Prata", serif;
+}

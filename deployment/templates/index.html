@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}" />
+        <title>Predictor</title>
+    </head>
+    <body>
+        <section class="container">
+            <div class="title-box">
+                <h1>Accra House Pricing Predictor</h1>
+            </div>
+
+            <h1>{{location}}</h1>
+            <p>{{one}}</p>
+            <p>{{two}}</p>
+            <p>{{three}}</p>
+            <div class="form-input-box">
+                <form action="/" method="POST">
+                    <div>
+                        <label for="location">Location:</label>
+                        <input
+                            type="text"
+                            name="location"
+                            id="location"
+
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for="bedrooms">Bedroom:</label>
+                        <input
+                            type="text"
+                            name="bedrooms"
+                            id="bedrooms"
+
+                            placeholder="Enter number"
+                            onkeypress="onKeyPress(event)"
+                        />
+                    </div>
+                    <div>
+                        <label for="bathrooms">Bathroom:</label>
+                        <input
+                            type="text"
+                            name="bathrooms"
+                            id="bathrooms"
+
+                            placeholder="Enter number"
+                            onkeypress="onKeyPress(event)"
+                        />
+                    </div>
+                    <div>
+                        <label for="garages">Garage:</label>
+                        <input
+                            type="text"
+                            name="garages"
+                            id="garages"
+                            placeholder="Enter number"
+                            onkeypress="onKeyPress(event)"
+                        />
+                    </div>
+                </form>
+            </div>
+            <div class="form-submit-box">
+                <form action="/" method='POST'>
+                    <input type="submit" value="Predict" />
+                </form>
+            </div>
+
+            <div class="prediction-box">
+                <p>The price is GHS <span>25,361.00</span> </p>
+            </div>
+        </section>
+    </body>
+    <script>
+        function onKeyPress(event) {
+            if (!/^\d*\.?\d*$/.test(event.key)) {
+                event.preventDefault();
+            }
+        }
+    </script>
+</html>
