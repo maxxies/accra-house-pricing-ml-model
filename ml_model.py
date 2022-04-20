@@ -9,6 +9,10 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import VotingRegressor
 from sklearn.model_selection import RandomizedSearchCV
+from sklearn.svm import SVR
+import sklearn.externals
+import joblib
+import warnings
 
 data_path = 'housing_data.csv'
 housing_data = pd.read_csv(data_path)
@@ -61,8 +65,8 @@ test_X, validation_X, test_y, validation_y = train_test_split(data_X, label_y, r
 lr_clf = LinearRegression()
 dt_clf = DecisionTreeRegressor()
 rf_clf = RandomForestRegressor()
-voting_clf = VotingRegressor(estimators=[('rf', rf_clf), ('lr', lr_clf), ('dt', dt_clf)])
-
+svm_clf = SVR()
+voting_clf = VotingRegressor(estimators=[('rf', rf_clf), ('lr', lr_clf), ('dt', dt_clf), ('svm_clf',svm_clf)])
 
 def display_scores(scores):
     print("Scores: {}".format(scores))
@@ -70,10 +74,9 @@ def display_scores(scores):
     print("Standard deviation: {}".format(scores.std()))
 
 
-# Analysis of the predictors on test set
 print("Analysis of the predictors on the test dataset")
 print("Labels : {}".format(list(test_y[:5])))
-for clf in (lr_clf, dt_clf, rf_clf, voting_clf):
+for clf in (lr_clf, dt_clf, rf_clf,svm_clf, voting_clf):
     clf.fit(train_X, train_y)
     y_pred = clf.predict(test_X)
     scores = cross_val_score(clf, train_X, train_y, scoring="neg_mean_squared_error", cv=10)   # Checks for scores in sets of training data
@@ -84,15 +87,25 @@ for clf in (lr_clf, dt_clf, rf_clf, voting_clf):
     display_scores(model_rmse_scores)
 
 
-# Analysis of the predictors on validation set
 print("Accuracy on validation dataset")
 print("Labels : {}".format(list(validation_y[:5])))
-for clf in (lr_clf, dt_clf, rf_clf, voting_clf):
+for clf in (lr_clf, dt_clf, rf_clf,svm_clf, voting_clf):
     clf.fit(train_X, train_y)
     y_pred = clf.predict(validation_X)
     print("\n" + clf.__class__.__name__)
     print("Accuracy : {}".format(clf.score(validation_X, validation_y) * 100))
     print("Predictions : {}".format(y_pred[:5]))
+
+
+print("Accuracy on train dataset")
+print("Labels : {}".format(list(train_y[:5])))
+for clf in (lr_clf, dt_clf, rf_clf,svm_clf, voting_clf):
+    clf.fit(train_X, train_y)
+    y_pred = clf.predict(train_X)
+    print("\n" + clf.__class__.__name__)
+    print("Accuracy : {}".format(clf.score(train_X, train_y) * 100))
+    print("Predictions : {}".format(y_pred[:5]))
+
 
 # Model tuning on selected model
 n_estimators = [int(x) for x in np.linspace(start=1, stop=20, num=20)]
@@ -108,3 +121,10 @@ random_grid = {'n_estimators': n_estimators, 'max_features': max_features, 'max_
 rf_random = RandomizedSearchCV(estimator=rf_clf, param_distributions=random_grid, n_iter=100, cv=5, verbose=2, random_state=35, n_jobs=-1)
 rf_random.fit(train_X, train_y)
 print("Best hyperparameters : ", rf_random.best_params_)
+
+
+# Saving model
+warnings.filterwarnings("ignore")
+model = joblib.load('saved_model')
+predict = model.predict([[5.704139, -0.168796, 2.0, 4.0, 6.0]])
+print(predict[0])
