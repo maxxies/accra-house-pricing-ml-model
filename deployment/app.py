@@ -5,6 +5,7 @@ import joblib
 import warnings
 
 app = Flask(__name__)
+model = joblib.load('saved_model.joblib')
 
 
 @app.route('/', methods=['GET'])
@@ -69,17 +70,15 @@ def predict():
         # # When no error is encountered
         # else:
         # Loading model
-        model = joblib.load('saved_model')
+
         # Making predictions : latitude,longitude, bedrooms, garage, bathroom
         predictprice = model.predict([[5.704139, -0.168796, 2.0, 4.0, 6.0]])
         warnings.filterwarnings("ignore")
         prediction = 2104
-        return render_template('index.html', latitude=predictprice[0], longitude=longitude, prediction=prediction, error=error)
+        return render_template('index.html', latitude=predictprice, longitude=longitude, prediction=prediction, error=error)
 
     else:
-        return render_template('index.html', data=location, one=bathroom, two=bedroom, three=garage,
-                               prediction=prediction,
-                               error=error)
+        return render_template('index.html', prediction=prediction, error=error,  latitude=latitude, longitude=longitude)
 
 
 if __name__ == '__main__':

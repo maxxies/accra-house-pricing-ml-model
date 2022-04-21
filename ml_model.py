@@ -124,7 +124,8 @@ print("Best hyperparameters : ", rf_random.best_params_)
 
 
 # Saving model
+model = joblib.dump(rf_clf, 'saved_model.joblib')
 warnings.filterwarnings("ignore")
-model = joblib.load('saved_model')
+model = joblib.load('saved_model.sav')
 predict = model.predict([[5.704139, -0.168796, 2.0, 4.0, 6.0]])
 print(predict[0])
