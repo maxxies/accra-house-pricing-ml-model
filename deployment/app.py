@@ -5,7 +5,7 @@ import joblib
 import warnings
 
 app = Flask(__name__)
-model = joblib.load('saved_model.joblib')
+model = joblib.load('saved_model_one.joblib')
 
 
 @app.route('/', methods=['GET'])
@@ -17,8 +17,7 @@ def start_app():
     prediction = None
     error = None
 
-    return render_template('index.html', data=location, one=bathroom, two=bedroom, three=garage, prediction=error,
-                           error=error)
+    return render_template('index.html', prediction=error, error=error)
 
 
 @app.route('/', methods=['POST'])
@@ -33,49 +32,51 @@ def predict():
     prediction = None
     error = None
     if request.method == 'POST':
-        # location = request.form['location']
-        # bathroom = request.form['bathrooms']
-        # bedroom = request.form['bedrooms']
-        # garage = request.form['garages']
-        #
-        # # cleans location input by user
-        # if ',' in location:
-        #     end = location.index(',')
-        # else:
-        #     end = None
-        # location = "".join(location[: end])  # takes name from list by slicing
-        # if location.lower() == "dome":  # To distinguish among Benin's and Ghana's
-        #     location = location + ',Ghana'
-        #
-        # try:
-        #     # Gets longitude and latitude from location entered
-        #     geolocator = Nominatim(user_agent="accrahousepricing")
-        #     location_coordinates = geolocator.geocode(location)
-        #     latitude = location_coordinates.latitude
-        #     longitude = location_coordinates.longitude
-        # except:
-        #     latitude = None
-        #     longitude = None
+        location = request.form['location']
+        bathroom = request.form['bathrooms']
+        bedroom = request.form['bedrooms']
+        garage = request.form['garages']
 
-        # # checks if coordinates were received
-        # if latitude is None and longitude is None:
-        #     return render_template('index.html', data=location, one=bathroom, two=bedroom, three=garage,
-        #                            latitude=latitude, longitude=longitude, prediction=prediction,
-        #                            error="Could not get coordinates of location, no or weak connection.")
-        # # Checks if locations are found in Accra only
-        # elif math.floor(latitude) != 5:
-        #     return render_template('index.html', data=location, one=bathroom, two=bedroom, three=garage,
-        #                            latitude=latitude, longitude=longitude, prediction=prediction,
-        #                            error="Location not found in Accra.")
-        # # When no error is encountered
-        # else:
-        # Loading model
+        # cleans location input by user
+        if ',' in location:
+            end = location.index(',')
+        else:
+            end = None
+        location = "".join(location[: end])  # takes name from list by slicing
+        if location.lower() == "dome":  # To distinguish among Benin's and Ghana's
+            location = location + ',Ghana'
 
-        # Making predictions : latitude,longitude, bedrooms, garage, bathroom
-        predictprice = model.predict([[5.704139, -0.168796, 2.0, 4.0, 6.0]])
-        warnings.filterwarnings("ignore")
-        prediction = 2104
-        return render_template('index.html', latitude=predictprice, longitude=longitude, prediction=prediction, error=error)
+        try:
+            # Gets longitude and latitude from location entered
+            geolocator = Nominatim(user_agent="maxmawube@gmail.com")
+            location_coordinates = geolocator.geocode(location)
+            latitude = location_coordinates.latitude
+            longitude = location_coordinates.longitude
+        except:
+            latitude = None
+            longitude = None
+
+
+        # checks if coordinates were received
+        if latitude is None and longitude is None:
+            return render_template('index.html', data=location, one=bathroom, two=bedroom, three=garage,
+                                   latitude=latitude, longitude=longitude, prediction=prediction,
+                                   error="Could not get coordinates of location, no or weak connection.")
+        # Checks if locations are found in Accra only
+        elif math.floor(latitude) != 5:
+            return render_template('index.html', data=location, one=bathroom, two=bedroom, three=garage,
+                                   latitude=latitude, longitude=longitude, prediction=prediction,
+                                   error="Location not found in Accra.")
+        # When no error is encountered
+        else:
+
+            # Making predictions : latitude,longitude, bedrooms, garage, bathroom
+            if garage == '':
+                garage = 0
+            predictprice = model.predict([[5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)]])
+            warnings.filterwarnings("ignore")
+            prediction = "{0:,.2f}".format(predictprice[0])
+            return render_template('index.html', latitude=latitude, longitude=longitude, prediction=prediction, error=error)
 
     else:
         return render_template('index.html', prediction=prediction, error=error,  latitude=latitude, longitude=longitude)
