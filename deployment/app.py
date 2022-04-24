@@ -5,7 +5,6 @@ import joblib
 import warnings
 
 app = Flask(__name__)
-model = joblib.load('saved_model_one.joblib')
 
 
 @app.route('/', methods=['GET'])
@@ -17,7 +16,7 @@ def start_app():
     prediction = None
     error = None
 
-    return render_template('index.html', prediction=error, error=error)
+    return render_template('index.html', prediction=prediction, error=error)
 
 
 @app.route('/', methods=['POST'])
@@ -69,10 +68,10 @@ def predict():
                                    error="Location not found in Accra.")
         # When no error is encountered
         else:
-
             # Making predictions : latitude,longitude, bedrooms, garage, bathroom
             if garage == '':
                 garage = 0
+            model = joblib.load('model.joblib')
             predictprice = model.predict([[5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)]])
             warnings.filterwarnings("ignore")
             prediction = "{0:,.2f}".format(predictprice[0])
