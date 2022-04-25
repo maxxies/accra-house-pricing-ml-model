@@ -12,8 +12,6 @@
             <div class="title-box">
                 <h1>Accra House Pricing Predictor</h1>
             </div>
-            <p>{{latitude}}</p>
-            <p>{{longitude}}</p>
             <div class="form-input-box">
                 <form action="/" method="POST">
                     <div>
@@ -61,11 +59,22 @@
                     </div>
                 </form>
             </div>
+            {%if prediction or error %}
+            <div class="form-submit-box">
+                <form action="/" method='POST' id="form-input" class="one">
+                    <input type="submit" value="Predict" />
+                </form>
+                <form action="/" method='GET' id="form-input" class="two">
+                    <input type="submit" value="Reload" />
+                </form>
+            </div>
+            {% else %}
             <div class="form-submit-box">
                 <form action="/" method='POST' id="form-input">
                     <input type="submit" value="Predict" />
                 </form>
             </div>
+            {% endif %}
             {%if prediction %}
             <div class="prediction-box">
                 <p>The price is GHS <span>{{prediction}}</span> </p>

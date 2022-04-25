@@ -13,7 +13,7 @@ body {
 }
 
 .title-box {
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
     padding: 0.5%;
     text-align: center;
@@ -30,7 +30,7 @@ body {
 
 .form-input-box {
     padding: 1.5%;
-    width: 70%;
+    width: 85%;
     margin: 1% auto;
     box-sizing: border-box;
     background-color: #feffff;
@@ -60,7 +60,7 @@ body {
     border: 1px solid #0e3854;
     padding: 1.2%;
     padding-left: 3%;
-    width: 60%;
+    width: 80%;
     outline: none;
     color: black;
     background-color: white;
@@ -68,26 +68,28 @@ body {
 }
 
 .form-submit-box {
+    display: flex;
     width: 70%;
     margin: 2px auto;
     box-sizing: border-box;
     align-items: center;
+    justify-content: space-around;
 }
 .form-submit-box input {
     font: inherit;
     cursor: pointer;
     background-color: #ff6187;
     color: white;
-    padding: 0.5rem 1.5rem;
+    padding: 10% 20%;
     border: 1px solid #ff6187;
-    border-radius: 30px;
+    border-radius: 20px;
     font-weight: 400;
     align-items: center;
     font-family: "Questrial", sans-serif;
 }
 
 .prediction-box {
-    width: 70%;
+    width: 90%;
     margin: 0 auto;
     padding: 0.1%;
     font-size: 150%;

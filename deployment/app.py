@@ -2,17 +2,23 @@ import math
 from flask import Flask, render_template, request
 from geopy.geocoders import Nominatim
 import joblib
+import pickle
 import warnings
+import numpy as np
 
 app = Flask(__name__)
 
 
+def pricePredictor(to_predict_list):
+    to_predict = np.array(to_predict_list).reshape(1, 5)
+    # model = joblib.load('model.joblib')
+    model = pickle.load(open("model_lr.pkl", "rb"))
+    result = model.predict(to_predict)
+    return result[0]
+
+
 @app.route('/', methods=['GET'])
 def start_app():
-    location = None
-    bathroom = None
-    bedroom = None
-    garage = None
     prediction = None
     error = None
 
@@ -21,15 +27,9 @@ def start_app():
 
 @app.route('/', methods=['POST'])
 def predict():
-    location = None
-    bathroom = None
-    bedroom = None
-    garage = None
-    latitude = None
-    longitude = None
-
     prediction = None
     error = None
+
     if request.method == 'POST':
         location = request.form['location']
         bathroom = request.form['bathrooms']
@@ -71,14 +71,13 @@ def predict():
             # Making predictions : latitude,longitude, bedrooms, garage, bathroom
             if garage == '':
                 garage = 0
-            model = joblib.load('model.joblib')
-            predictprice = model.predict([[5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)]])
+            predictprice = pricePredictor([5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)])
             warnings.filterwarnings("ignore")
-            prediction = "{0:,.2f}".format(predictprice[0])
-            return render_template('index.html', latitude=latitude, longitude=longitude, prediction=prediction, error=error)
+            prediction = "{0:,.2f}".format(predictprice)
+            return render_template('index.html', prediction=prediction, error=error)
 
     else:
-        return render_template('index.html', prediction=prediction, error=error,  latitude=latitude, longitude=longitude)
+        return render_template('index.html', prediction=prediction, error=error)
 
 
 if __name__ == '__main__':
