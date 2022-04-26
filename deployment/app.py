@@ -7,12 +7,12 @@ import warnings
 import numpy as np
 
 app = Flask(__name__)
+# model = joblib.load('model.joblib')
+model = pickle.load(open("model_lr.pkl", "rb"))
 
 
-def pricePredictor(to_predict_list):
+def price_predictor(to_predict_list):
     to_predict = np.array(to_predict_list).reshape(1, 5)
-    # model = joblib.load('model.joblib')
-    model = pickle.load(open("model_lr.pkl", "rb"))
     result = model.predict(to_predict)
     return result[0]
 
@@ -71,9 +71,10 @@ def predict():
             # Making predictions : latitude,longitude, bedrooms, garage, bathroom
             if garage == '':
                 garage = 0
-            predictprice = pricePredictor([5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)])
+            predictprice = price_predictor([5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)])
             warnings.filterwarnings("ignore")
             prediction = "{0:,.2f}".format(predictprice)
+
             return render_template('index.html', prediction=prediction, error=error)
 
     else:

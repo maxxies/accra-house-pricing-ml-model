@@ -30,7 +30,7 @@ body {
 
 .form-input-box {
     padding: 1.5%;
-    width: 85%;
+    width: 70%;
     margin: 1% auto;
     box-sizing: border-box;
     background-color: #feffff;
@@ -60,7 +60,7 @@ body {
     border: 1px solid #0e3854;
     padding: 1.2%;
     padding-left: 3%;
-    width: 80%;
+    width: 100%;
     outline: none;
     color: black;
     background-color: white;
@@ -80,7 +80,7 @@ body {
     cursor: pointer;
     background-color: #ff6187;
     color: white;
-    padding: 10% 20%;
+    padding: 13% 25%;
     border: 1px solid #ff6187;
     border-radius: 20px;
     font-weight: 400;
