@@ -8,7 +8,7 @@ import numpy as np
 
 app = Flask(__name__)
 # model = joblib.load('model.joblib')
-model = pickle.load(open("model_lr.pkl", "rb"))
+model = pickle.load(open("model_rf.pkl", "rb"))
 
 
 def price_predictor(to_predict_list):

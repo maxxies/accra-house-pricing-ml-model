@@ -27,7 +27,7 @@ try:
     csv_writer = csv.writer(csv_file, delimiter=',')
     csv_writer.writerow(['Location', 'Latitude', 'Longitude', 'Bedrooms','Garage' , 'Bathrooms', 'Price'])
     page_count = 1
-    while page_count < 743:
+    while page_count < 769:
         # Scrapes container from which data is found.(container--> HTML element data is in)
         datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'pg'+str(page_count))))
         # Gets all the data from the container
