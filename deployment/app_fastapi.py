@@ -1,12 +1,12 @@
 import math
-from flask import Flask, render_template, request
+from fastapi import FASTAPI
 from geopy.geocoders import Nominatim
 import joblib
 import pickle
 import warnings
 import numpy as np
 
-app = Flask(__name__)
+app = FASTAPI()
 # model = joblib.load('model.joblib')
 model = pickle.load(open("model_lr.pkl", "rb"))
 
