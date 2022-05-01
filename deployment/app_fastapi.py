@@ -14,7 +14,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-model = pickle.load(open("model_lr.pkl", "rb"))
+model = pickle.load(open("model_rf.pkl", "rb"))
 
 
 def price_predictor(to_predict_list):
@@ -24,15 +24,14 @@ def price_predictor(to_predict_list):
 
 
 @app.get('/', response_class=HTMLResponse)
-def start_app(request :Request):
+def start_app(request: Request):
     prediction = None
     error = None
-
-    return templates.TemplateResponse("index.html", {"request":Request, "prediction":prediction, "error":error})
+    return templates.TemplateResponse("index.html", {"request":request, "prediction":prediction, "error":error})
 
 
 @app.post('/', response_class=HTMLResponse)
-def predict(request:Request, location: str = Form(...), bathrooms: int = Form(...), bedrooms: int = Form(...), garages: int = Form(...)):
+def predict(request: Request, location: str = Form(...), bathrooms: int = Form(...), bedrooms: int = Form(...), garages: int = Form(...)):
     prediction = None
     error = None
 
@@ -63,22 +62,20 @@ def predict(request:Request, location: str = Form(...), bathrooms: int = Form(..
 
     # checks if coordinates were received
     if latitude is None and longitude is None:
-        return templates.TemplateResponse('index.html', {"request":Request, "prediction":prediction,
+        return templates.TemplateResponse('index.html', {"request":request, "prediction":prediction,
                                    "error":"Could not get coordinates of location, no or weak connection."})
     # Checks if locations are found in Accra only
     elif math.floor(latitude) != 5:
-        return templates.TemplateResponse('index.html',{"request":Request, "prediction":prediction,
+        return templates.TemplateResponse('index.html',{"request":request, "prediction":prediction,
                                    "error":"Location not found in Accra."})
     # When no error is encountered
     else:
         # Making predictions : latitude,longitude, bedrooms, garage, bathroom
-        if garage == '':
-            garage = 0
-        predictprice = price_predictor([5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)])
+        predictprice = price_predictor([latitude, longitude, int(bedroom), int(garage), int(bathroom)])
         warnings.filterwarnings("ignore")
         prediction = "{0:,.2f}".format(predictprice)
 
-        return templates.TemplateResponse('index.html', {"request":Request, "prediction":prediction, "error":error})
+        return templates.TemplateResponse('index.html', {"request":request, "prediction":prediction, "error":error})
 
 
 if __name__ == '__main__':

@@ -69,9 +69,8 @@ def predict():
         # When no error is encountered
         else:
             # Making predictions : latitude,longitude, bedrooms, garage, bathroom
-            if garage == '':
-                garage = 0
-            predictprice = price_predictor([5.704139, -0.168796, int(bedroom), int(garage), int(bathroom)])
+
+            predictprice = price_predictor([latitude, longitude, int(bedroom), int(garage), int(bathroom)])
             warnings.filterwarnings("ignore")
             prediction = "{0:,.2f}".format(predictprice)
 

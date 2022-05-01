@@ -5,7 +5,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="{{ url_for('static', path='/style.css')}}"  rel="stylesheet"/>
-<!-- for flask        <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}" />-->
 
         <title>Predictor</title>
     </head>
@@ -57,6 +56,7 @@
 
                             placeholder="Enter a number"
                             onkeypress="onKeyPress(event)"
+                            required
                         />
                     </div>
                 </form>
