@@ -1,14 +1,13 @@
 import math
 from flask import Flask, render_template, request
 from geopy.geocoders import Nominatim
-import joblib
 import pickle
 import warnings
 import numpy as np
 
 app = Flask(__name__)
-# model = joblib.load('model.joblib')
-model = pickle.load(open("model_lr.pkl", "rb"))
+
+model = pickle.load(open("model_rf.pkl", "rb"))
 
 
 def price_predictor(to_predict_list):
@@ -71,7 +70,7 @@ def predict():
             # Making predictions : latitude,longitude, bedrooms, garage, bathroom
 
             predictprice = price_predictor([latitude, longitude, int(bedroom), int(garage), int(bathroom)])
-            warnings.filterwarnings("ignore")
+            # warnings.filterwarnings("ignore")
             prediction = "{0:,.2f}".format(predictprice)
 
             return render_template('index.html', prediction=prediction, error=error)
