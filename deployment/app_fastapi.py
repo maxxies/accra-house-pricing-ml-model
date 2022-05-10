@@ -59,7 +59,6 @@ def predict(request: Request, location: str = Form(...), bathrooms: int = Form(.
         latitude = None
         longitude = None
 
-
     # checks if coordinates were received
     if latitude is None and longitude is None:
         return templates.TemplateResponse('index.html', {"request":request, "prediction":prediction,

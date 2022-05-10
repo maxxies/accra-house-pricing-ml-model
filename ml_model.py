@@ -2,17 +2,21 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import VotingRegressor
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.svm import SVR
 import sklearn.externals
-import joblib
 import warnings
+import pickle
+from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.metrics import mean_squared_error
+import seaborn as sns
 
 data_path = 'housing_data.csv'
 housing_data = pd.read_csv(data_path)
@@ -29,83 +33,74 @@ new_housing_data = pd.concat([housing_data.drop(["Bathrooms", "Garage", "Bedroom
                              axis=1)  # Concatenating dataframes of transformed data with part of existing dataframe
 
 # Correlations of features with price feature
-corr_matrix = housing_data.corr()
-print(corr_matrix)
+corr_matrix = new_housing_data.corr()
 plt.imshow(corr_matrix, cmap='hot')
-plt.show()
 print(corr_matrix["Price"].sort_values(ascending=False))
+print(corr_matrix)
+plt.show()
 
 # Visualize data
-new_housing_data.plot(kind="scatter", x="Longitude", y="Latitude", s=(
-        new_housing_data["Bedrooms"] + new_housing_data["Bathrooms"] + new_housing_data["Garage"] / 10),
-                      label="Avg. House Size", c='Price', alpha=0.4, figsize=(10, 7), cmap=plt.get_cmap("jet"),
-                      colorbar=True)
+new_housing_data.plot(kind="scatter", x="Longitude", y="Latitude", s=(new_housing_data["Bedrooms"] + new_housing_data["Bathrooms"] + new_housing_data["Garage"]/10), label="Avg. House Size" , c='Price', alpha=0.4, figsize=(10,7),  cmap=plt.get_cmap("jet"), colorbar=True)
 plt.legend()
 plt.show()
 
-# Feature scaling
-ss = StandardScaler()
-housing_data_to_scale = new_housing_data.drop(["Location", "Longitude", "Latitude"], axis=1)
-scaled_data = ss.fit_transform(housing_data_to_scale)
-new_scaled_data = pd.DataFrame(scaled_data, columns=housing_data_to_scale.columns, index=housing_data_to_scale.index)
-prepared_housing_data = pd.concat(
-    [new_housing_data.drop(["Bathrooms", "Garage", "Bedrooms", "Price"], axis=1), new_scaled_data],
-    axis=1)  # Concatenating dataframes
+# Pairplotting features
+sns.pairplot(new_housing_data, hue="Price", diag_kind="hist")
+
+# Handling Location attribute
+ordinal_encoder = OrdinalEncoder()
+housing_locations = new_housing_data.drop([ "Longitude", "Latitude","Bathrooms", "Garage", "Bedrooms","Price"], axis=1)
+housing_cat_encoded = ordinal_encoder.fit_transform(housing_locations)
+new_housing_data["Category"] = housing_cat_encoded
+new_housing_data.info()
+new_housing_data.head(5)
 
 # Splitting data into datasets
-housing_data = prepared_housing_data.drop(["Location", "Price"], axis=1)  # Removes house prices and locations from data
-housing_labels = prepared_housing_data['Price']  # Sets house prices to labels in a data frame
-train_X, data_X, train_y, label_y = train_test_split(housing_data, housing_labels, test_size=0.20, random_state=47,
-                                                     shuffle=True)
+housing_data = new_housing_data.drop(["Location",  "Price"], axis=1)  # Removes house prices and locations from data
+housing_labels = new_housing_data['Price']    # Sets house prices to labels in a data frame
+train_X, data_X, train_y, label_y = train_test_split(housing_data, housing_labels, test_size=0.20, random_state=47, shuffle=True)
 # Splitting data into test datasets and validation datasets
-test_X, validation_X, test_y, validation_y = train_test_split(data_X, label_y, random_state=47, shuffle=True,
-                                                              test_size=0.10)
+test_X, validation_X, test_y, validation_y = train_test_split(data_X, label_y, random_state=47, shuffle=True, test_size=0.10)
+
 
 # Model selection
 lr_reg = LinearRegression()
 dt_reg = DecisionTreeRegressor()
 rf_reg = RandomForestRegressor()
 svm_reg = SVR()
-voting_reg = VotingRegressor(estimators=[('rf', rf_reg), ('lr', lr_reg), ('dt', dt_reg), ('svm_reg',svm_reg)])
-
-def display_scores(scores):
-    print("Scores: {}".format(scores))
-    print("Mean: {}".format(scores.mean()))
-    print("Standard deviation: {}".format(scores.std()))
+etr_reg = ExtraTreesRegressor()
+voting_reg = VotingRegressor(estimators=[('rf', rf_reg), ('lr', lr_reg), ('dt', dt_reg), ('svm_reg',svm_reg),('etr_reg', etr_reg)])
 
 
 print("Analysis of the predictors on the test dataset")
-print("Labels : {}".format(list(test_y[:5])))
-for reg in (lr_reg, dt_reg, rf_reg,svm_reg, voting_reg):
+# print("Labels : {}".format(list(test_y[:5])))
+for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
     reg.fit(train_X, train_y)
     y_pred = reg.predict(test_X)
     scores = cross_val_score(reg, train_X, train_y, scoring="neg_mean_squared_error", cv=10)   # Checks for scores in sets of training data
     model_rmse_scores = np.sqrt(-scores)                                                       # Calculates the performance metric using root mean square method
     print("\n" + reg.__class__.__name__)
-    print("Predictions : {}".format(y_pred[:5]))
-    print("Accuracy : {}".format(reg.score(test_X, test_y)))
-    display_scores(model_rmse_scores)
-
+    print("RMSE : {}".format(model_rmse_scores))
+    print("Accuracy : {}".format(reg.score(test_X, test_y)* 100))
+    print("MSE : {}".format(mean_squared_error(test_y,y_pred)))
 
 print("Accuracy on validation dataset")
-print("Labels : {}".format(list(validation_y[:5])))
-for reg in (lr_reg, dt_reg, rf_reg,svm_reg, voting_reg):
+# print("Labels : {}".format(list(validation_y[:5])))
+for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
     reg.fit(train_X, train_y)
     y_pred = reg.predict(validation_X)
     print("\n" + reg.__class__.__name__)
     print("Accuracy : {}".format(reg.score(validation_X, validation_y) * 100))
-    print("Predictions : {}".format(y_pred[:5]))
-
+    print("MSE : {}".format(mean_squared_error(validation_y,y_pred)))
 
 print("Accuracy on train dataset")
-print("Labels : {}".format(list(train_y[:5])))
-for reg in (lr_reg, dt_reg, rf_reg,svm_reg, voting_reg):
+# print("Labels : {}".format(list(train_y[:5])))
+for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
     reg.fit(train_X, train_y)
     y_pred = reg.predict(train_X)
     print("\n" + reg.__class__.__name__)
     print("Accuracy : {}".format(reg.score(train_X, train_y) * 100))
-    print("Predictions : {}".format(y_pred[:5]))
-
+    print("MSE : {}".format(mean_squared_error(train_y,y_pred)))
 
 # Model tuning on selected model
 n_estimators = [int(x) for x in np.linspace(start=1, stop=20, num=20)]
@@ -124,9 +119,4 @@ print("Best hyperparameters : ", rf_random.best_params_)
 
 
 # Saving model
-model = rf_reg.fit(housing_data, housing_labels)
-joblib.dump(model, 'saved_model.joblib')
-warnings.filterwarnings("ignore")
-model = joblib.load('saved_model.sav')
-predict = model.predict([[5.704139, -0.168796, 2.0, 4.0, 6.0]])
-print(predict[0])
+pickle.dump(rf_random, open("model_rf.pkl","wb"))
