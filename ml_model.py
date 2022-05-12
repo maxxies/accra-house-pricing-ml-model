@@ -48,10 +48,11 @@ plt.show()
 sns.pairplot(new_housing_data, hue="Price", diag_kind="hist")
 
 # Handling Location attribute
-ordinal_encoder = OrdinalEncoder()
+# ordinal_encoder = OrdinalEncoder()
 housing_locations = new_housing_data.drop([ "Longitude", "Latitude","Bathrooms", "Garage", "Bedrooms","Price"], axis=1)
-housing_cat_encoded = ordinal_encoder.fit_transform(housing_locations)
-new_housing_data["Category"] = housing_cat_encoded
+# housing_cat_encoded = ordinal_encoder.fit_transform(housing_locations)
+new_housing_data = new_housing_data.join(pd.get_dummies(new_housing_data.drop([ "Longitude", "Latitude","Bathrooms", "Garage", "Bedrooms","Price"], axis=1)))
+# new_housing_data["Category"] = housing_cat_encoded
 new_housing_data.info()
 new_housing_data.head(5)
 
