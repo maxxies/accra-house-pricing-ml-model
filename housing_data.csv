@@ -1,32 +1,55 @@
-Location,Latitude,Longitude,Bedrooms,Garage,Bathrooms,Price
-East legon hills,5.6927588,-0.1004742,3,,4,1599476
-East legon hills,5.6927588,-0.1004742,4,,5,1968600
-Haatso,5.6706808,-0.2033502,2,,1,459575
-Adenta,5.7041391,-0.1687965,3,,3,1364000
-Ashaley botwe,5.6864517,-0.1369489,3,2,3,710000
-East legon hills,5.6927588,-0.1004742,3,,4,1599476
-East legon hills,5.6927588,-0.1004742,4,,5,1968600
-Dome,5.6554227,-0.232884,4,2,5,4966580
-Adenta,5.7041391,-0.1687965,3,,3,1204448
-East legon hills,5.6927588,-0.1004742,4,,4,2000000
-Tse addo $340,5.5741658,-0.1401788,3,,4,2550000
-Spintex,5.6288265,-0.0901987,5,,6,2400000
-Adenta,5.7041391,-0.1687965,4,,4,1505560
-East legon hills,5.6927588,-0.1004742,4,2,4,2220701
-Amrahia,5.7666444,-0.1424324,10,10,10,1850000
-Adenta,5.7041391,-0.1687965,3,,3,1129170
-Tema ,5.6596441,-0.0096592,6,,6,1380000
-Aburi,5.8474757,-0.1752664,5,10,5,17000000
-East legon hills,5.6927588,-0.1004742,3,,4,1599476
-East legon hills,5.6927588,-0.1004742,3,,4,996200
-East legon hills,5.6927588,-0.1004742,4,,5,1968600
-Spintex,5.6288265,-0.0901987,3,,4,975000
-Spintex ,5.6288265,-0.0901987,4,,5,2258340
-Kwabenya,5.6738604,-0.2488115,7,4,6,1875000
-Tema,5.6596441,-0.0096592,4,,5,6055000
-Tema,5.6596441,-0.0096592,9,,9,3900000
-Spintex,5.6288265,-0.0901987,4,,5,2415000
-Cantonments,5.5841563,-0.1692489,5,10,4,11000000
-East legon police station ,5.6316248,-0.1525559,4,5,5,4893070
-Dansoman,5.5468112,-0.2656595,10,4,5,1500000
-East legon hills,5.6927588,-0.1004742,4,,5,33875100
+Location,Bedrooms,Garage,Bathrooms,Price
+Haatso,3,2,3,858169
+Tse addo,2,,2,1133378
+East legon hills,4,,5,1968600
+East legon hills,3,,4,1599476
+Haatso,3,2,3,858169
+Tse addo,2,,2,1133378
+"Dome,ghana",4,2,5,4966580
+East legon - trasacco ,3,,3,1560000
+Ayi mensah,3,3,3,960000
+Ashongman,6,4,4,500000
+East legon,4,,4,2100000
+East legon hills,3,4,4,840000
+East legon hills,4,,4,2000000
+East airport,4,3,5,3010000
+Lakeside estate,4,5,4,1542908
+Afienya,4,,3,500000
+Trasaco valley ,5,2,6,17600000
+Cantonments,4,,4,4893070
+East legon hills,8,4,10,782000
+East legon hills,4,,5,1400000
+Trasaco valley ,5,2,6,12000000
+East legon,8,8,10,9000000
+Haatso,4,2,5,2400000
+Teshie-nungua,4,,3,410000
+Kwabenya,6,,5,1096603
+Tse addo,5,4,5,5934987
+Oyibi,2,,2,596448
+Accra,4,1,6,2451643
+Oyibi,3,,3,659232
+Oyibi,3,,3,753408
+Lashibi,3,1,3,1975333
+Dome ,5,4,5,1200000
+East legon ,6,1,7,9600000
+Tse addo,3,,3,1435612
+Tse addo,3,,3,1851184
+East legon hills,3,,4,1599476
+East legon hills,3,,4,1054000
+East legon hills,3,,4,996200
+East legon,4,,4,3750000
+East legon hills,3,,4,996200
+Spintex,5,,6,2400000
+Ashongman ,4,1,5,2183062
+Spintex,3,,4,975000
+Adenta newlegon,4,5,4,1237500
+Adenta manucipal,3,150,4,830000
+Adenta- amanforom ,3,10,3,1017900
+Kwabenya,7,4,6,1875000
+East airport tse addo ,3,4,4,3225000
+Cantonments,5,10,4,11000000
+Tesano,3,8,2,2610000
+Adenta,4,,4,3011120
+East legon,4,6,5,3700000
+Paraku estates,4,,5,1467000
+Kasoa,3,,3,330000
