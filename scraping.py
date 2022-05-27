@@ -28,6 +28,8 @@ try:
     csv_writer.writerow(['Location','Bedrooms', 'Garage' , 'Bathrooms', 'Price'])
     page_count = 1
     while page_count < 769:
+        time.sleep(5)
+
         # Scrapes container from which data is found.(container--> HTML element data is in)
         datacontainer = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'pg'+str(page_count))))
         # Gets all the data from the container
@@ -37,6 +39,7 @@ try:
             databox = datacontainer.find_elements(By.CLASS_NAME, "row.mqs-featured-prop-inner-wrap.clickable ")
 
         #   Loops through list of data to scrap specific data-information from a data taken at a time
+        time.sleep(2)
         for data in databox:
             # Scraping the number of bathrooms
             try:
@@ -104,41 +107,31 @@ try:
                 location = None
 
             # Getting latitudes and longitudes of location
-            # time.sleep(2)
-            # try:
-            #     geolocator = Nominatim(user_agent="ahiamadzormaxwell7@gmail.com")
-            #     geocode = RateLimiter(geolocator.geocode, min_delay_seconds=2)
-            #     location_coordinates = geocode(location)
-            #     latitude = location_coordinates.latitude
-            #     longitude = location_coordinates.longitude
-            # except :
-            #     latitude = None
-            #     longitude = None
+            try:
+                geolocator = Nominatim(user_agent="ahiamadzormaxwell7@gmail.com")
+                geocode = RateLimiter(geolocator.geocode, min_delay_seconds=2)
+                location_coordinates = geocode(location)
+                latitude = location_coordinates.latitude
+                longitude = location_coordinates.longitude
+            except :
+                latitude = None
+                longitude = None
 
             # Writing processed scraped data to csv file
-            # if price is not None and latitude is not None and longitude is not None :     # Allow only data with price, lonitude and latitude values
-            #     if math.floor(latitude) == 5:  # Checks if locations are found in Accra only
-            #         if location.lower() == "dome,ghana":  # To change name back to Dome
-            #             location = 'Dome'
-            #         # writes data to file
-            #         csv_writer.writerow([location.lower().capitalize(), float(latitude), float(longitude), inner_li_bed, inner_li_garage, inner_li_shower, price])
-            #         count += 1
-            # total_count += 1
-            try:
-                if price is not None:
-                    csv_writer.writerow(
-                    [location.lower().capitalize(), inner_li_bed, inner_li_garage,
-                    inner_li_shower, price])
+            if price is not None and latitude is not None and longitude is not None :     # Allow only data with price, lonitude and latitude values
+                if math.floor(latitude) == 5:  # Checks if locations are found in Accra only
+                    if location.lower() == "dome,ghana":  # To change name back to Dome
+                        location = 'Dome'
+                    # writes data to file
+                    csv_writer.writerow([location.lower().capitalize(), float(latitude), float(longitude), inner_li_bed, inner_li_garage, inner_li_shower, price])
                     count += 1
-
-            except:
-                 pass
-
             total_count += 1
 
         print("Page ", page_count, ": ", count)  # Number of saved data after each page
         # Clicks on button to load next page for data scraping
         button = driver.find_element(By.ID, "pagenumnext")
+        time.sleep(2)
+
         driver.execute_script("arguments[0].click();", button)
         page_count = page_count + 1
 
