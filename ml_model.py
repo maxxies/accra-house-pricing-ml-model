@@ -15,6 +15,7 @@ import warnings
 import pickle
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.preprocessing import OrdinalEncoder
+from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_squared_error
 import seaborn as sns
 
@@ -48,13 +49,16 @@ plt.show()
 sns.pairplot(new_housing_data, hue="Price", diag_kind="hist")
 
 # Handling Location attribute
+ordinal_encoder = OrdinalEncoder()
+transformer = ColumnTransformer(transformers=[('ord', OrdinalEncoder(),['Location'])], remainder="passthrough") # remainder passthrough means that all not mentioned columns will not be touched.
+transformed = transformer.fit_transform(new_housing_data)
+transformed
 # ordinal_encoder = OrdinalEncoder()
-housing_locations = new_housing_data.drop([ "Longitude", "Latitude","Bathrooms", "Garage", "Bedrooms","Price"], axis=1)
 # housing_cat_encoded = ordinal_encoder.fit_transform(housing_locations)
+# Using pandas dummies for location encoding
+housing_locations = new_housing_data.drop([ "Longitude", "Latitude","Bathrooms", "Garage", "Bedrooms","Price"], axis=1)
 new_housing_data = new_housing_data.join(pd.get_dummies(new_housing_data.drop([ "Longitude", "Latitude","Bathrooms", "Garage", "Bedrooms","Price"], axis=1)))
-# new_housing_data["Category"] = housing_cat_encoded
-new_housing_data.info()
-new_housing_data.head(5)
+
 
 # Splitting data into datasets
 housing_data = new_housing_data.drop(["Location",  "Price"], axis=1)  # Removes house prices and locations from data

@@ -15,11 +15,13 @@ import math
 PATH = "C:\programs\chromedriver.exe"
 ser = Service(PATH)
 op = webdriver.ChromeOptions()
+op.add_argument('--disable-blink-features=AutomationControlled')
 driver = webdriver.Chrome(service=ser, options= op)
 driver.get("https://meqasa.com/houses-for-sale-in-Accra.html?w=1")     # Url of page to be scrapped
 
 count = 0
 total_count = 0
+
 # Scraping data
 try:
     # Setting up csv file to write data into to csv file
@@ -39,8 +41,8 @@ try:
             databox = datacontainer.find_elements(By.CLASS_NAME, "row.mqs-featured-prop-inner-wrap.clickable ")
 
         #   Loops through list of data to scrap specific data-information from a data taken at a time
-        time.sleep(2)
         for data in databox:
+            time.sleep(2)
             # Scraping the number of bathrooms
             try:
                 li_shower = data.find_element(By.CLASS_NAME, 'shower')
@@ -108,14 +110,15 @@ try:
 
             # Getting latitudes and longitudes of location
             try:
-                geolocator = Nominatim(user_agent="ahiamadzormaxwell7@gmail.com")
+                geolocator = Nominatim(user_agent="maxmawube@gmail.com")
                 geocode = RateLimiter(geolocator.geocode, min_delay_seconds=2)
-                location_coordinates = geocode(location)
+                location_coordinates = geocode(location, timeout=10)
                 latitude = location_coordinates.latitude
                 longitude = location_coordinates.longitude
             except :
                 latitude = None
                 longitude = None
+
 
             # Writing processed scraped data to csv file
             if price is not None and latitude is not None and longitude is not None :     # Allow only data with price, lonitude and latitude values
@@ -139,7 +142,6 @@ except TimeoutException :
     print("TIme out error.")
     driver.close()
     csv_file.close()
-
 
 finally:
     driver.quit()
