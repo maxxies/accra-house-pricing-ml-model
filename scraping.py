@@ -25,7 +25,7 @@ total_count = 0
 # Scraping data
 try:
     # Setting up csv file to write data into to csv file
-    csv_file = open('housing_data.csv', 'a', newline='')
+    csv_file = open('Data/housing_data.csv', 'a', newline='')
     csv_writer = csv.writer(csv_file, delimiter=',')
     csv_writer.writerow(['Location','Bedrooms', 'Garage' , 'Bathrooms', 'Price'])
     page_count = 1
