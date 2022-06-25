@@ -42,7 +42,6 @@ try:
 
         #   Loops through list of data to scrap specific data-information from a data taken at a time
         for data in databox:
-            time.sleep(2)
             # Scraping the number of bathrooms
             try:
                 li_shower = data.find_element(By.CLASS_NAME, 'shower')

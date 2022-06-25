@@ -15,8 +15,12 @@ import warnings
 import pickle
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.preprocessing import OrdinalEncoder
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_absolute_percentage_error
+from sklearn.metrics import r2_score
 import seaborn as sns
 
 data_path = 'Data/housing_data.csv'
@@ -73,25 +77,35 @@ voting_reg = VotingRegressor(estimators=[('rf', rf_reg), ('lr', lr_reg), ('dt', 
 
 
 print("Analysis of the predictors on the test dataset")
+print("Analysis of the predictors on the test dataset")
 # print("Labels : {}".format(list(test_y[:5])))
 for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
     reg.fit(train_X, train_y)
     y_pred = reg.predict(test_X)
     scores = cross_val_score(reg, train_X, train_y, scoring="neg_mean_squared_error", cv=10)   # Checks for scores in sets of training data
-    model_rmse_scores = np.sqrt(-scores)                                                       # Calculates the performance metric using root mean square method
     print("\n" + reg.__class__.__name__)
-    print("RMSE : {}".format(model_rmse_scores))
     print("Accuracy : {}".format(reg.score(test_X, test_y)* 100))
-    print("MSE : {}".format(mean_squared_error(test_y,y_pred)))
+    print("Root Mean Squared Error : {}".format(mean_squared_error(test_y,y_pred, squared=False)))
+    print("Mean Squared Error : {}".format(mean_squared_error(test_y,y_pred, squared=True)))
+    print("Mean Absolute Error : {}".format(mean_absolute_error(test_y,y_pred)))
+    print("Mean Absolute Percentage Error : {}".format(mean_absolute_percentage_error(test_y,y_pred)))
+    print("R Squared: {}".format(r2_score(test_y,y_pred)))
 
+
+print("Accuracy on validation dataset")
 print("Accuracy on validation dataset")
 # print("Labels : {}".format(list(validation_y[:5])))
 for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
     reg.fit(train_X, train_y)
     y_pred = reg.predict(validation_X)
     print("\n" + reg.__class__.__name__)
-    print("Accuracy : {}".format(reg.score(validation_X, validation_y) * 100))
-    print("MSE : {}".format(mean_squared_error(validation_y,y_pred)))
+    print("Accuracy : {}".format(reg.score(validation_X,validation_y)* 100))
+    print("Root Mean Squared Error : {}".format(mean_squared_error(validation_y,y_pred, squared=False)))
+    print("Mean Squared Error : {}".format(mean_squared_error(validation_y,y_pred, squared=True)))
+    print("Mean Absolute Error : {}".format(mean_absolute_error(validation_y,y_pred)))
+    print("Mean Absolute Percentage Error : {}".format(mean_absolute_percentage_error(validation_y,y_pred)))
+    print("R Squared: {}".format(r2_score(validation_y,y_pred)))
+
 
 print("Accuracy on train dataset")
 # print("Labels : {}".format(list(train_y[:5])))
@@ -99,8 +113,12 @@ for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
     reg.fit(train_X, train_y)
     y_pred = reg.predict(train_X)
     print("\n" + reg.__class__.__name__)
-    print("Accuracy : {}".format(reg.score(train_X, train_y) * 100))
-    print("MSE : {}".format(mean_squared_error(train_y,y_pred)))
+    print("Accuracy : {}".format(reg.score(train_X,train_y)* 100))
+    print("Root Mean Squared Error : {}".format(mean_squared_error(train_y,y_pred, squared=False)))
+    print("Mean Squared Error : {}".format(mean_squared_error(train_y,y_pred, squared=True)))
+    print("Mean Absolute Error : {}".format(mean_absolute_error(train_y,y_pred)))
+    print("Mean Absolute Percentage Error : {}".format(mean_absolute_percentage_error(train_y,y_pred)))
+    print("R Squared: {}".format(r2_score(train_y,y_pred)))
 
 # Model tuning on selected model
 n_estimators = [int(x) for x in np.linspace(start=1, stop=20, num=20)]
