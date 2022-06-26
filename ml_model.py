@@ -53,16 +53,19 @@ plt.show()
 sns.pairplot(new_housing_data, hue="Price", diag_kind="hist")
 
 # Handling Location attribute
-new_housing_data= pd.concat([new_housing_data, pd.get_dummies(new_housing_data.drop([ "Longitude", "Latitude","Bathrooms", "Garage", "Bedrooms","Price"], axis=1))
-], axis=1)
-new_housing_data.info()
-new_housing_data.head(5)
+transformer = OneHotEncoder()
+transformed = transformer.fit_transform(new_housing_data[["Location"]]).toarray()
+cat_data = pd.DataFrame(transformed, columns=transformer.categories_, index=new_housing_data["Location"].index)
+prepared_housing_data = pd.concat([new_housing_data, cat_data], axis=1)    # Concatenating dataframes of transformed data with part of existing dataframe
+
+prepared_housing_data.info()
+prepared_housing_data.head(5)
 
 
 # Splitting data into datasets
-housing_data = new_housing_data.drop(["Location",  "Price"], axis=1)  # Removes house prices and locations from data
-housing_labels = new_housing_data['Price']    # Sets house prices to labels in a data frame
-train_X, data_X, train_y, label_y = train_test_split(housing_data, housing_labels, test_size=0.20, random_state=47, shuffle=True)
+housing_data = prepared_housing_data.drop(["Location",  "Price"], axis=1)  # Removes house prices and locations from data
+housing_labels = prepared_housing_data['Price']    # Sets house prices to labels in a data frame
+train_X, data_X, train_y, label_y = train_test_split(housing_data.values, housing_labels.values, test_size=0.20, random_state=47, shuffle=True)
 # Splitting data into test datasets and validation datasets
 test_X, validation_X, test_y, validation_y = train_test_split(data_X, label_y, random_state=47, shuffle=True, test_size=0.10)
 
