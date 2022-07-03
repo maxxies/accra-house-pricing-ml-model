@@ -8,19 +8,24 @@ from geopy.geocoders import Nominatim
 import pickle
 import warnings
 import numpy as np
+import pandas as pd
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-model = pickle.load(open("model_rf.pkl", "rb"))
+loaded_model = pickle.load(open("model.pkl","rb"))
+loaded_encoder = pickle.load(open("encoder.pickle","rb"))
 
-
-def price_predictor(to_predict_list):
-    to_predict = np.array(to_predict_list).reshape(1, 5)
-    result = model.predict(to_predict)
-    return result[0]
+# Predicts price with user data
+def PricePredictor(location,to_predict_list):
+    userData={"Location" :[location]}
+    data = pd.DataFrame(userData)
+    enc=loaded_encoder.transform(data[["Location"]]).toarray()
+    new_array = np.concatenate([to_predict_list,enc[0]]).reshape(1,230)
+    result = loaded_model.predict(new_array)
+    return abs(result[0])
 
 
 @app.get('/', response_class=HTMLResponse)
@@ -70,7 +75,7 @@ def predict(request: Request, location: str = Form(...), bathrooms: int = Form(.
     # When no error is encountered
     else:
         # Making predictions : latitude,longitude, bedrooms, garage, bathroom
-        predictprice = price_predictor([latitude, longitude, int(bedroom), int(garage), int(bathroom)])
+        predictprice = PricePredictor(location,[latitude, longitude, int(bedroom), int(garage), int(bathroom)])
         warnings.filterwarnings("ignore")
         prediction = "{0:,.2f}".format(predictprice)
 

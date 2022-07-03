@@ -96,7 +96,6 @@ for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
 
 
 print("Accuracy on validation dataset")
-print("Accuracy on validation dataset")
 # print("Labels : {}".format(list(validation_y[:5])))
 for reg in (lr_reg, dt_reg, rf_reg,svm_reg,etr_reg, voting_reg):
     reg.fit(train_X, train_y)
