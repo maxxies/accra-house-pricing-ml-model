@@ -1,1 +1,1 @@
-web: uvicorn deployment.app_fastapi:app --host 0.0.0.0 --port $PORT
+web:gunicorn -w 4 -k uvicorn.workers.UviconrnWorker deployment.app_fastapi:app
