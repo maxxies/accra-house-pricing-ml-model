@@ -12,11 +12,11 @@ import pandas as pd
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="deployment/templates")
+app.mount("/static", StaticFiles(directory="deployment/static"), name="static")
 
-loaded_model = pickle.load(open("model.pkl","rb"))
-loaded_encoder = pickle.load(open("encoder.pickle","rb"))
+loaded_model = pickle.load(open("deployment/model.pkl", "rb"))
+loaded_encoder = pickle.load(open("deployment/encoder.pickle", "rb"))
 
 # Predicts price with user data
 def PricePredictor(location,to_predict_list):
