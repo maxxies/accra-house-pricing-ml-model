@@ -98,3 +98,8 @@ body {
     font-weight: 300;
     font-family: "Prata", serif;
 }
+@media only screen and (max-width: 769px){
+
+.form-input-box {
+    width:80%;}
+}
